@@ -9,30 +9,28 @@ import javax.servlet.http.HttpSession;
 
 import model.DAOModel;
 
-public class Home2 extends HttpServlet
+public class Transfer extends HttpServlet
 {
 	public void service(HttpServletRequest request,HttpServletResponse response)
 	{
 		try
 		{
-			int temp1=Integer.parseInt(request.getParameter("CID"));
-			String temp2=request.getParameter("PW");
+			int tpac=Integer.parseInt(request.getParameter("TPAC"));
+			int amt=Integer.parseInt(request.getParameter("AMT"));
 			
 			DAOModel dao=new DAOModel();
-			dao.setCustid(temp1);
-			dao.setPassword(temp2);
+			HttpSession session=request.getSession();
+			int accno=(int)session.getAttribute("accno");
+			dao.setAccno(accno);
+			Boolean temp=dao.amountTransfer(amt);
 			
-			Boolean temp=dao.login();
 			if(temp==true)
 			{
-				HttpSession session =request.getSession(true);
-				session.setAttribute("accno",dao.getAccno());
-				session.setAttribute("name", dao.getName());
-				response.sendRedirect("proceed.jsp");
+				response.sendRedirect("transferSuccess.jsp");
 			}
 			else
 			{
-				response.sendRedirect("invalid.jsp");
+				response.sendRedirect("transferFailure.jsp");
 			}
 		}
 		catch(Exception e)

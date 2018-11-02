@@ -1,5 +1,4 @@
 package controller;
-
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -9,30 +8,27 @@ import javax.servlet.http.HttpSession;
 
 import model.DAOModel;
 
-public class Home2 extends HttpServlet
+public class Balance extends HttpServlet 
 {
 	public void service(HttpServletRequest request,HttpServletResponse response)
 	{
 		try
 		{
-			int temp1=Integer.parseInt(request.getParameter("CID"));
-			String temp2=request.getParameter("PW");
-			
+			HttpSession session=request.getSession();
+			int temp=(int) session.getAttribute("accno");
 			DAOModel dao=new DAOModel();
-			dao.setCustid(temp1);
-			dao.setPassword(temp2);
+			dao.setAccno(temp);
 			
-			Boolean temp=dao.login();
-			if(temp==true)
+			Boolean balance=dao.checkBalance();
+			if(balance==true)
 			{
-				HttpSession session =request.getSession(true);
-				session.setAttribute("accno",dao.getAccno());
-				session.setAttribute("name", dao.getName());
-				response.sendRedirect("proceed.jsp");
+				HttpSession session1=request.getSession();
+				session1.setAttribute("balance", dao.getBalance());
+				response.sendRedirect("balanceSuccess.jsp");
 			}
 			else
 			{
-				response.sendRedirect("invalid.jsp");
+				response.sendRedirect("balanceFailure.jsp");
 			}
 		}
 		catch(Exception e)
