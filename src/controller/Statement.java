@@ -1,6 +1,8 @@
 package controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -9,31 +11,28 @@ import javax.servlet.http.HttpSession;
 
 import model.DAOModel;
 
-public class Home2 extends HttpServlet
+public class Statement extends HttpServlet
 {
 	public void service(HttpServletRequest request,HttpServletResponse response)
 	{
 		try
 		{
-			int temp1=Integer.parseInt(request.getParameter("CID"));
-			String temp2=request.getParameter("PW");
+			HttpSession session=request.getSession();
+			int accno=(int)session.getAttribute("accno");
 			
 			DAOModel dao=new DAOModel();
-			dao.setCustid(temp1);
-			dao.setPassword(temp2);
+			dao.setAccno(accno);
 			
-			Boolean temp=dao.login();
-			if(temp==true)
+			ArrayList al=dao.getStatement();
+			if(al==null)
 			{
-				HttpSession session =request.getSession(true);
-				session.setAttribute("accno",dao.getAccno());
-				session.setAttribute("name", dao.getName());
-				response.sendRedirect("proceed.jsp");
+				response.sendRedirect("statementFail.jsp");
 			}
 			else
 			{
-				response.sendRedirect("invalid.jsp");
-			}
+		    session.setAttribute("al", al);
+			response.sendRedirect("statementSuccess.jsp");
+		   }
 		}
 		catch(Exception e)
 		{
